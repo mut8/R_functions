@@ -7,13 +7,10 @@ library(agricolae)
 library(lawstat)
 library("multcompView")
 library("RXKCD")
-<<<<<<< HEAD
 library("xtable")
-
-=======
 library("lawstat")
 library("xtable")
->>>>>>> 6cd9cd9c406240e0c90ecd7a3de1d1ba2cca9501
+
 
 ##################
 ##default colors##
