@@ -19,7 +19,7 @@ library("xtable")
 errcol<-"black"
 lwd<-.3
 cex<-2
-lty=1
+lty<-1
 pch<-c(1,16,2,17)
 
 
@@ -78,7 +78,7 @@ siglev<-function(x)
 barplot.def<-function(height, error, ylab="", names.arg="", main="",
                       col=colscale, ylim=F, xlab="", ...)
 {
-  if (ylim==F)
+  if (length(ylim)==1)
     {
       if(max(height+error)>0)
         ylim[2]<-max(height+error)
@@ -96,7 +96,7 @@ barplot.def<-function(height, error, ylab="", names.arg="", main="",
 ##barplots mit mean & error##
 #############################
 
-bplot<-function(x, y, col="black", err="stderr", main="", ylab="", ci=0.05, ylim=F, xlab="")
+bplot<-function(x, y, col="black", err="stderr", main="", ylab="", ci=0.05, ylim=F, xlab="", ...)
 {
 
   var<-x[is.na(x)!=T]
@@ -114,7 +114,7 @@ bplot<-function(x, y, col="black", err="stderr", main="", ylab="", ci=0.05, ylim
     }
 
 
-  barplot.def(mean, error, ylab=ylab, names.arg=levels(sep), main=main, ylim=ylim, xlab=xlab)
+  barplot.def(mean, error, ylab=ylab, names.arg=levels(sep), main=main, ylim=ylim, xlab=xlab, ...)
 
   aov<-aov(lm(var ~ sep))
   hsd<-HSD.test(aov, "sep")
@@ -161,7 +161,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1, name="", spe.mult=1, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", ...)
 {
   sep1.lev<-levels(as.factor(site.sep1))
   sep2.lev<-levels(as.factor(site.sep2))
@@ -202,8 +202,8 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1
   text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=.4)
                                         #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
   title(name)
-  legend("bottomright", pch=pch, col="black", sep2.lev)
-  legend("bottomleft", pch=16, col=col, sep1.lev)
+  legend("bottomright", pch=pch, col="black", paste(sep2.lev, sep2.unit))
+  legend("bottomleft", pch=16, col=col, paste(sep1.lev, sep1.unit))
 
 }
 
@@ -270,8 +270,8 @@ corr.ab<-function(a,b, pomit=F)
         cond<-is.na(a[,i]) == FALSE & is.na (b[,j]) == FALSE
         ctest<-cor.test(as.numeric(a[cond,i]),as.numeric(b[cond,j]))
         if (pomit==F) {
-          var1[i,j*3-2]<-ctest$estimate
-          var1[i,j*3-1]<-ctest$p.value
+          var1[i,j*3-2]<-formatC(ctest$estimate, digits=3)
+          var1[i,j*3-1]<-formatC(ctest$p.value, digits=4)
           var1[i,j*3]<-siglev(var1[i,j*3-1])
         } else {
 
