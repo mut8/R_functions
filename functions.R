@@ -161,7 +161,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
 {
   sep1.lev<-levels(as.factor(site.sep1))
   sep2.lev<-levels(as.factor(site.sep2))
@@ -186,20 +186,30 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1
   for (i in 1:length(sep1.lev))
     for (j in 1:length(sep2.lev))
       {
-        x<-mean(scores.sites[site.sep1==sep1.lev[j] & site.sep2==sep2.lev[i],1])
-        y<-mean(scores.sites[site.sep1==sep1.lev[j] & site.sep2==sep2.lev[i],2])
-        x.err<-stderr(scores.sites[site.sep1==sep1.lev[j] & site.sep2==sep2.lev[i],1])
-        y.err<-stderr(scores.sites[site.sep1==sep1.lev[j] & site.sep2==sep2.lev[i],2])
-        plotCI(x, y, uiw=y.err, liw=y.err, col=col[j], pch=pch[i], cex=1, add=T, gap=0)
-        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[j], pch=pch[i], cex=1, add=T, gap=0)
+        x<-mean(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],1])
+        y<-mean(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
+        x.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],1])
+        y.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
+        plotCI(x, y, uiw=y.err, liw=y.err, col=col[i], pch=pch[j], cex=1, add=T, gap=0)
+        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[i], pch=pch[j], cex=1, add=T, gap=0)
                                         #      print(paste(x, x.err,y, y.err))
                                         #      mat[length(harlev)*(i-1)+j, T]<-c(typlev[i], harlev[j], x,x.err,y,y.err)
+      
+      if(i!=1 & arrow==T)  
+      #?arrow
+      #?abline
+      {  
+      lastx<-mean(scores.sites[site.sep1==sep1.lev[i-1] & site.sep2==sep2.lev[j],1])
+      lasty<-mean(scores.sites[site.sep1==sep1.lev[i-1] & site.sep2==sep2.lev[j],2])
+      line(c(lastx,lasty), c(x,y), arrow=arrow(length=unit(0.25, "cm"), type="closed", angle=10))
       }
+    }
                                         #      mat
                                         #      write.csv(mat, "export/dif.sites.csv")
                                         #      print(spe.labels)
+
   scores<-(scores(ord, display="species", choices=1:2))
-  text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=.4)
+  points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=.4)
                                         #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
   title(name)
   legend("bottomright", pch=pch, col="black", paste(sep2.lev, sep2.unit))
