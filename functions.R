@@ -161,7 +161,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
 {
   sep1.lev<-levels(as.factor(site.sep1))
   sep2.lev<-levels(as.factor(site.sep2))
@@ -209,8 +209,12 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", col="black", pch=1
                                         #      print(spe.labels)
 
   scores<-(scores(ord, display="species", choices=1:2))
+  if (spe.label.type=="point")
   points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=.4)
-                                        #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
+  if (spe.label.type=="text")
+  text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=.4)
+  #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
+  
   title(name)
   legend("bottomright", pch=pch, col="black", paste(sep2.lev, sep2.unit))
   legend("bottomleft", pch=16, col=col, paste(sep1.lev, sep1.unit))
@@ -247,29 +251,42 @@ rot<-function(x,del)
   colnames(neu)<-paste(colnames(x), ".rot", sep="")
   return(neu)
 }
-                                        #correation matrix between to dataframes
 
-corr.ab<-function(a,b, pomit=F)
+
+
+
+#########################################
+#correation matrix between two dataframes#
+#########################################
+
+corr.ab<-function(a,b, pomit=F, tex=F, alpha=0.05, digits=3)
 {
-  if (pomit==T) {var1<-matrix(nrow=ncol(a), ncol=2*ncol(b))} else {var1<-matrix(nrow=ncol(a), ncol=3*ncol(b))}
+  if (pomit==T) {
+    var1<-matrix(nrow=ncol(a), ncol=2*ncol(b))
+    } else if (tex==T) {
+      var1<-matrix(nrow=ncol(a), ncol=ncol(b))
+      } else {
+        var1<-matrix(nrow=ncol(a), ncol=3*ncol(b))
+        }
+
   rownames(var1)<-colnames(a)
   cnames<-vector(length=length(colnames(var1)))
   prenames<-colnames(b)
 
-  if (pomit==F) {
+  if (pomit==F & tex==F) {
     for (i in 1:length(colnames(b)))
       {
         cnames[i*3-2]<-paste(prenames[i], "R")
         cnames[i*3-1]<-paste(prenames[i], "p")
         cnames[i*3]<-paste(prenames[i], "sig")
       }
-  } else {
+  } else if (pomit==T) {
     for (i in 1:length(colnames(b)))
       {
         cnames[i*2-1]<-paste(prenames[i], "R")
         cnames[i*2]<-paste(prenames[i], "sig")
       }
-  }
+  } else {cnames<-prenames}
 
 
   colnames(var1)<-cnames
@@ -279,15 +296,21 @@ corr.ab<-function(a,b, pomit=F)
       {
         cond<-is.na(a[,i]) == FALSE & is.na (b[,j]) == FALSE
         ctest<-cor.test(as.numeric(a[cond,i]),as.numeric(b[cond,j]))
-        if (pomit==F) {
+        if (pomit==F & tex==F) {
           var1[i,j*3-2]<-formatC(ctest$estimate, digits=3)
           var1[i,j*3-1]<-formatC(ctest$p.value, digits=4)
           var1[i,j*3]<-siglev(var1[i,j*3-1])
-        } else {
+        } else if (pomit==T) {
 
           var1[i,j*2-1]<-ctest$estimate
           tmp<-ctest$p.value
           var1[i,j*2]<-siglev(tmp)
+        } else { 
+          if (ctest$p.value < alpha) { 
+            var1[i,j] <- paste("\\textbf{", formatC(ctest$estimate, digits=digits), "}" )
+             } else { 
+               var1[i,j]<-formatC(ctest$estimate, digits=digits)
+               }
         }
       }
   return(var1)
@@ -308,7 +331,7 @@ corr.ab<-function(a,b, pomit=F)
 
 timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
                        massloss=0, masslossSE=0, ymin=F, ymax=F, xmin=F, xmax=F,
-                       ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, bg=1,
+                       ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, bg=1, topsig=T,
                        col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="darkgrey", type="o", letters=F, ...) {
                                         #xfac<-as.factor<-as.numeric(xfac)
 
@@ -448,7 +471,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
   if (endsig == T) {
     select<-mat$xfac==max(xfac)
     text(rep(xlim[2], length(seplev)), mat$y[select],
-         labels=sig,cex=.5)
+         labels=sig,cex=1)
   }
 
   if (allpoints==TRUE)
@@ -460,7 +483,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
 
                                         #1-way anovas für einzelne zeitpunkte mit sternchen über dem zeitpunkt für signifikanzniveaus
-  if (length(massloss)==1)
+  if (length(massloss)==1 & topsig==T)
     {
       sig<-vector(length=length(xlev))
       for (j in 1:length(xlev))
@@ -475,7 +498,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
           mat$sepcomp[mat$xf==xlev[j]]<-tmp$Letters
           sig[j] <- siglev(aov$p.value)
-          text(xlev[j], ylim[2], sig[j], cex=.5)
+          text(xlev[j], ylim[2], sig[j], cex=1, adj=c(0,1))
         }
     }
 
@@ -489,4 +512,17 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
   print(paste(xlev, "~ type", sig))
   return(mat)
+}
+
+##########################
+##plots for correlations##
+##########################
+
+corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, line=T, ...)
+{
+ylim<-c(min(v2), max(v2)+(max(v2)-min(v2))*0.1)
+plot(v1, v2, ylim=ylim, ...)
+cor<-cor.test(v1,v2)
+if (cor$p.value < alpha & line==T) abline(lm(v2~v1))     
+text(max(v1), ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=0.8, adj=c(1,1))
 }
