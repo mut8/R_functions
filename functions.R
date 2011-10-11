@@ -8,9 +8,6 @@ library(lawstat)
 library("multcompView")
 library("RXKCD")
 library("xtable")
-library("lawstat")
-library("xtable")
-
 
 ##################
 ##default colors##
@@ -465,7 +462,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
     if (legsig==T) {leg <- paste(seplev, sig)} else {leg <- seplev}
                                         #sternchen in legende für signifikanzniveaus für 1.way anovas für einzelne littertypen
     legend(legend, leg, col=col[1:length(seplev)],
-           lty=lty[1:length(seplev)], lwd=lwd[1:length(seplev)], ...)
+           lty=lty[1:length(seplev)], lwd=lwd[1:length(seplev)])
   }
 
   if (endsig == T) {
