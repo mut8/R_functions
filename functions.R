@@ -83,7 +83,7 @@ barplot.def<-function(height, error, ylab="", names.arg="", main="",
         ylim[1]<-min(height-error)
     }
 
-  barplot2(height, ylim=c(ylim[1], ylim[2]*1.2), plot.ci=TRUE, ci.u=height+error,ci.l=height-error, names.arg=names.arg,
+  barplot2(height, ylim=c(ylim[1], ylim[2]*1.2), plot.ci=TRUE, ci.u=height+error,ci.l=height, names.arg=names.arg,
            main=main, ylab=ylab, col=col, tck=0.01, xlab=xlab, ...)
 
   abline(h=0, col="black")
@@ -93,31 +93,38 @@ barplot.def<-function(height, error, ylab="", names.arg="", main="",
 ##barplots mit mean & error##
 #############################
 
-bplot<-function(x, y, col="black", err="stderr", main="", ylab="", ci=0.05, ylim=F, xlab="", ...)
+bplot<-function(x, y, col="black", err="stderr", main="", ylab="", ci=0.05, ylim=F, xlab="", order=levels(y), ...) 
+{            
+
+var<-x[is.na(x)!=T]
+sep<-as.factor(y[is.na(x)!=T])
+#if(length(order)>1)
+#  order<-levels(y)
+
+aov<-aov(lm(var ~ sep))
+hsd<-HSD.test(aov, "sep")
+
+mat<-data.frame(matrix(ncol=3, nrow=length(order)))
+colnames(mat)<-c("ord","mean", "error")
+
+for (i in 1:length(order))
 {
-
-  var<-x[is.na(x)!=T]
-  sep<-as.factor(y[is.na(x)!=T])
-
-  mean<-tapply(var, sep, mean)
-
-  if(err=="stderr")
-    error<-tapply(var, sep, stderr)
-
-  if(err=="ci")
+mat$ord[i]<-order[i]
+mat$mean[i]<-mean(var[sep==order[i]])
+if(err=="stderr")
+    mat$error[i]<-stderr(var[sep==order[i]])
+if(err=="ci")
     {
-      sds<-tapply(var, sep, sd)
-      error<-CI2(sds, 5, ci)
+      sds<-sd(var[sep==order[i]])
+      mat$error[i]<-CI2(sds, 5, ci)
     }
+}
 
+barplot.def(mat$mean, mat$error, ylab=ylab, names.arg=mat$ord, main=main, ylim=ylim, xlab=xlab, ...)
 
-  barplot.def(mean, error, ylab=ylab, names.arg=levels(sep), main=main, ylim=ylim, xlab=xlab, ...)
-
-  aov<-aov(lm(var ~ sep))
-  hsd<-HSD.test(aov, "sep")
-  gr<-hsd$M[order(hsd$trt)]
-  text(((0:3)+.6)*1.2, max(mean+error)*1.15, gr)
-
+for (i in 1:length(order))
+text((i-.4)*1.2, max(mat$mean+mat$error)*1.15, hsd$M[which(mat$ord[i]==hsd$trt)])
+  
 }
 
 #######################
@@ -327,8 +334,8 @@ corr.ab<-function(a,b, pomit=F, tex=F, alpha=0.05, digits=3)
 
 
 timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
-                       massloss=0, masslossSE=0, ymin=F, ymax=F, xmin=F, xmax=F,
-                       ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, bg=1, topsig=T,
+                       massloss=0, masslossSE=0, ylim=c(F,F), xlim=c(F,F),
+                       ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, pt.bg=1, topsig=T,
                        col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="darkgrey", type="o", letters=F, ...) {
                                         #xfac<-as.factor<-as.numeric(xfac)
 
@@ -370,7 +377,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
   if(length(lwd)<length(seplev)) lwd<-rep(lwd, length(seplev))
   if(length(lty)<length(seplev)) lty<-rep(lty, length(seplev))
   if(length(pch)<length(seplev)) pch<-rep(pch, length(seplev))
-  if(length(bg)<length(seplev)) bg<-rep(bg, length(seplev))
+  if(length(pt.bg)<length(seplev)) bg<-rep(pt.bg, length(seplev))
 
 
   mat<-data.frame(matrix(nrow=length(xlev)*length(seplev), ncol=6))
@@ -406,15 +413,15 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
       }
 
 
-                                        #if (ymin==F)
-  ymin<-min(mat$y)
+  if (ylim[1]==F){ymin<-min(mat$y)} else {ymin=ylim[1]}
+  
+  if (ylim[2]==F) {ymax<-max(mat$y)+(max(mat$y)-min(mat$y))*0.1} else {ymax=ylim[2]}
+  
+  if (xlim[1]==F) {xmin<-min(mat$massloss)} else {xmin=xlim[1]}
                                         #if (ymax==F)
-  ymax<-max(mat$y)+(max(mat$y)-min(mat$y))*0.1
-                                        #if (xmin==F)
-  xmin<-min(mat$massloss)
-                                        #if (ymax==F)
-  if(endsig==T) {xmax<-max(mat$massloss)+(max(mat$massloss)-min(mat$massloss))*0.1} else {xmax<-max(mat$massloss)}
-
+  if (xlim[2]==F) {
+    if(endsig==T) {xmax<-max(mat$massloss)+(max(mat$massloss)-min(mat$massloss))*0.1} else {xmax<-max(mat$massloss)}
+  } else {xmax=xlim[2]}
                                         #if (length(massloss)==0) {xlim<-c(xmin, xmax)} else {c(xmax, xmin)}
                                         #ylim<-c(ymin, ymax)
   xlim<-c(xmin, xmax)
@@ -435,11 +442,11 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
     select<-mat$sepfac==seplev[i]
     if (ci==F) {plotCI(mat$massloss[select], mat$y[select], barcol=errcol, uiw=mat$y.errbar[select], liw=mat$y.errbar[select], add=TRUE, gap=0,
-          type=type, pch=pch[i], col=col[i], lwd=lwd, lty=1,...)} else
-    {plotCI(mat$massloss[select]+(xmax-xmin)*0.004*(i-imax/2), mat$y[select],  uiw=mat$y.erbar[select], liw=mat$y.errbar[select], add=TRUE, gap=0, barcol=errcol, type=type, bg=bg[i],pch=pch[i], col=col[i], lwd=lwd, lty=lty[i], ...)}
+          type=type, pch=pch[i], col=col[i], lwd=lwd, lty=1, pt.bg=pt.bg[i], ...)} else
+    {plotCI(mat$massloss[select]+(xmax-xmin)*0.004*(i-imax/2), mat$y[select],  uiw=mat$y.erbar[select], liw=mat$y.errbar[select], add=TRUE, gap=0, barcol=errcol, type=type, pt.bg=pt.bg[i], pch=pch[i], col=col[i], lwd=lwd, lty=lty[i], ...)}
 
     if (length(masslossSE)>1)
-      plotCI(mat$massloss[select], mat$y[select], err="x", uiw=mat$massloss.errbar[select], liw=mat$massloss.errbar[select], add=TRUE, pch=pch[i], barcol=errcol, gap=0, type=type, col=col[i], lwd=lwd, lty=lty[i], ...)
+      plotCI(mat$massloss[select], mat$y[select], err="x", uiw=mat$massloss.errbar[select], liw=mat$massloss.errbar[select], add=TRUE, pch=pch[i], barcol=errcol, gap=0, type=type, col=col[i], lwd=lwd, lty=lty[i], , pt.bg=pt.bg[i], ...)
 
                                         #1-way anovas nach für einzelne littertypen
 
