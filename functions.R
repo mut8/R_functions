@@ -165,7 +165,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
 {
   sep1.lev<-levels(as.factor(site.sep1))
   sep2.lev<-levels(as.factor(site.sep2))
@@ -174,6 +174,8 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
     col <- rep(col, length(sep1.lev))
   if(length(pch) < length(sep2.lev))
     pch <- rep(pch, length(sep1.lev))
+#  if(length(pt.bg) < length(sep2.lev))
+#    pt.bg <- rep(pt.bg, length(sep1.lev))
 
 
   xvar<-eigenvals(ord)/sum(eigenvals(ord))
@@ -187,6 +189,7 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
                                         #        points(ord, choices=c(1,2),  display="sites", select=harvest==harlev[j] & type==typlev[i], col=colscale[j], pch=pch[i], cex=.6)
                                         #     mat<-matrix(nrow=length(typlev)*length(harlev), ncol=6)
                                         #      colnames(mat)<-c("type", "harvest", "pca1", "pca1.error", "pca2", "pca2.error")
+
   for (i in 1:length(sep1.lev))
     for (j in 1:length(sep2.lev))
       {
@@ -194,8 +197,8 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
         y<-mean(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
         x.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],1])
         y.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
-        plotCI(x, y, uiw=y.err, liw=y.err, col=col[i], pch=pch[j], cex=1, add=T, gap=0)
-        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[i], pch=pch[j], cex=1, add=T, gap=0)
+        plotCI(x, y, uiw=y.err, liw=y.err, col=col[i], pch=pch[j], cex=1, add=T, gap=0, pt.bg=pt.bg[i])
+        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[i], pch=pch[j], cex=1, add=T, gap=0, pt.bg=pt.bg[i])
                                         #      print(paste(x, x.err,y, y.err))
                                         #      mat[length(harlev)*(i-1)+j, T]<-c(typlev[i], harlev[j], x,x.err,y,y.err)
       
@@ -221,7 +224,7 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   
   title(name)
   legend("bottomright", pch=pch, col="black", paste(sep2.lev, sep2.unit))
-  legend("bottomleft", pch=16, col=col, paste(sep1.lev, sep1.unit))
+  legend("bottomleft", pch=16, col=col, bg=pt.bg, paste(sep1.lev, sep1.unit))
 
 }
 
@@ -336,7 +339,7 @@ corr.ab<-function(a,b, pomit=F, tex=F, alpha=0.05, digits=3)
 timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
                        massloss=0, masslossSE=0, ylim=c(F,F), xlim=c(F,F),
                        ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, pt.bg=1, topsig=T,
-                       col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="darkgrey", type="o", letters=F, ...) {
+                       col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="black", type="o", letters=F, ...) {
                                         #xfac<-as.factor<-as.numeric(xfac)
 
                                         #  nam<-""
