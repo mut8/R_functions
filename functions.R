@@ -2,9 +2,9 @@ library("vegan")
 library("MASS")
 library("Hmisc")
 library("gplots")
-library(TeachingDemos)
-library(agricolae)
-library(lawstat)
+library("TeachingDemos")
+library("agricolae")
+library("lawstat")
 library("multcompView")
 library("RXKCD")
 library("xtable")
@@ -60,6 +60,7 @@ sumif<-function(df,sep) {
 siglev<-function(x)
 {
   x<-as.numeric(x)
+  if(is.na(x)) {return ("NA")} else
   if(x < 0.001)  {return("***")} else
   if(x < 0.01 ) {return("**")} else
   if (x < 0.05) {return ("*")} else

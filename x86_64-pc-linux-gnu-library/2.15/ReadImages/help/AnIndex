@@ -1,0 +1,11 @@
+ReadImages-package	ReadImages-package
+clipping	clipping
+imagematrix	imagematrix
+imageType	imageType
+logo	logo
+normalize	normalize
+plot.imagematrix	plot.imagematrix
+print.imagematrix	print.imagematrix
+read.jpeg	read.jpeg
+ReadImages	ReadImages-package
+rgb2grey	rgb2grey

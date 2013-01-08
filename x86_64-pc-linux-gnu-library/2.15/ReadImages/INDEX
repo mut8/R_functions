@@ -1,0 +1,12 @@
+ReadImages-package      Utilities to read in various image formats into
+                        R.
+clipping                Clipping image
+imageType               Get information on color type of imagematrix
+imagematrix             Generate an imagematrix, i.e. primary data
+                        structure of rimage
+logo                    R logo imagematrix
+normalize               Normalization for vector and matrix
+plot.imagematrix        Plotting an imagematrix object
+print.imagematrix       Print information on a given imagematrix object
+read.jpeg               Read JPEG file
+rgb2grey                Convert color imagematrix to grey imagematrix
