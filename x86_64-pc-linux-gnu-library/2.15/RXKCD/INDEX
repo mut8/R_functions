@@ -1,7 +1,0 @@
-getXKCD                 Display your favourite XKCD comic in R
-saveConfig              Save XKCD database info into a file in the user
-                        directory
-searchXKCD              Search your favorite XKCD comic strip by
-                        title/trascript
-updateConfig            Update the XKCD database saved in the user
-                        directory
