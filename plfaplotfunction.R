@@ -86,4 +86,67 @@ for (i in 1:(length(tmp4)-1)) {
 }
 
 
+hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, col.inv=F, pch=c(21,22), legsize=1, cex.sig=1, ...) {
+  #fac<-samples$Region
+  #horlev<-c("L","F","H","B")
+  #hor<-samples$horizon.ord
+  cond1<-is.element(hor,horlev)
+  hor1<-factor(hor[cond1], ordered=T, levels=horlev)
+  fac1<-factor(fac[cond1])
+  var1<-var[cond1]
+  
+  means<-tapply(var1, list(fac1,hor1), mean)
+  error<-tapply(var1, list(fac1,hor1), stderr)
+  col<-rep(col, ncol(means))
+  
+  if(col.inv==F) {
+    plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means+error)), tck=0.01, ...)
+    for(i in 1:nrow(means)) {
+      plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=col[i], add=T, gap=0, ...)
+    }
+    
+    if (legpl != "none")
+      legend(legpl, pch=pch[1:ncol(means)], pt.bg=col[1:ncol(means)], rownames(means), cex=legsize)
+    
+    axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
+    axis(1, tck=0.01)
+    axis(3, tck=0.01, labels=F)
+    axis(4, tck=0.01, labels=F,  at=ncol(means):1)
+    
+    for(i in 1:ncol(means)) {
+      cond3<-hor1==colnames(means)[i]
+      plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
+      print(plev)
+      if(plev!="NaN"){
+        text(max(means[,i]+error[,i])+max(means+error)*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
+        
+      }
+  }
+    
+  } else {
+    par(bg="black", col="white", col.axis="white", col.lab="white", col.main="white")
+  plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means+error)), tck=0.01, ...)
+  for(i in 1:nrow(means)) {
+    plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=col[i], add=T, gap=0, ...)
+  }
+  if (legpl != "none")
+    legend(legpl, pch=pch[1:ncol(means)], col="black", pch[1:ncol(means)], pt.bg=col[1:ncol(means)], rownames(means), bty="n", cex=legsize)
+  
+  axis(2, at=ncol(means):1, labels=colnames(means), las=1, col="white")
+  axis(1, col="white")
+  axis(3, col="white", labels=F)
+  axis(4, col="white", labels=F,  at=ncol(means):1)
+
+  for(i in 1:ncol(means)) {
+    cond3<-hor1==colnames(means)[i]
+    plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
+    print(plev)
+    if(plev!="NaN"){
+      text(max(means[,i]+error[,i])+max(means+error)*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
+      
+    }
+  }
+  
+}
+}
 
