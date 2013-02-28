@@ -57,7 +57,7 @@ sumif<-function(df,sep) {
   return(sumsh)
 }
 
-siglev<-function(x)
+siglev<-function(x, no.ns=F)
 {
   x<-as.numeric(x)
   if(is.na(x)) {return ("NA")} else
@@ -65,7 +65,7 @@ siglev<-function(x)
   if(x < 0.01 ) {return("**")} else
   if (x < 0.05) {return ("*")} else
   if (x < 0.1) {return (".")} else
-  return("n.s.")
+  if(no.ns==F) {return("n.s.")} else {return("")}
 }
                                         #rotate point around origin
 
@@ -166,10 +166,10 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, ...)
 {
-  sep1.lev<-levels(as.factor(site.sep1))
-  sep2.lev<-levels(as.factor(site.sep2))
+  sep1.lev<-unique(as.factor(site.sep1))
+  sep2.lev<-unique(as.factor(site.sep2))
 
   if(length(col) < length(sep1.lev))
     col <- rep(col, length(sep1.lev))
@@ -177,14 +177,27 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
     pch <- rep(pch, length(sep1.lev))
 #  if(length(pt.bg) < length(sep2.lev))
 #    pt.bg <- rep(pt.bg, length(sep1.lev))
-
-
+  
+  
   xvar<-eigenvals(ord)/sum(eigenvals(ord))
-  plot(ord, choices=c(1,2), type="n", tck=.01,
-       xlab=paste("PCA1", formatC(xvar[1]*100, digits=3), "% variance"),
-       ylab=paste("PCA2", formatC(xvar[2]*100, digits=3), "% variance"))
+  
+  if(is.na(xvar[1])) {
+    xlab<-paste(labname, "1 ", sep="")
+    ylab<-paste(labname, "2 ", sep="")
+  } else {
+    xlab<-paste(labname, choices[1], " ", formatC(xvar[1]*100, digits=3), "% variance", sep="")
+    ylab<-paste(labname, choices[2], " ", formatC(xvar[2]*100, digits=3), "% variance", sep="")
+    
+  }
+  
+  
+  
+  plot(ord, choices=choices, type="n", tck=.01,
+       xlab=xlab, ylab=ylab)
 
-  scores.sites<-(scores(ord, display="sites", choices=1:2))
+  
+  
+  scores.sites<-(scores(ord, display="sites", choices=choices))
                                         #        for (i in 1:length(typlev))
                                         #        for (j in 1:length(harlev))
                                         #        points(ord, choices=c(1,2),  display="sites", select=harvest==harlev[j] & type==typlev[i], col=colscale[j], pch=pch[i], cex=.6)
@@ -198,8 +211,8 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
         y<-mean(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
         x.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],1])
         y.err<-stderr(scores.sites[site.sep1==sep1.lev[i] & site.sep2==sep2.lev[j],2])
-        plotCI(x, y, uiw=y.err, liw=y.err, col=col[i], pch=pch[j], cex=1, add=T, gap=0, pt.bg=pt.bg[i])
-        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[i], pch=pch[j], cex=1, add=T, gap=0, pt.bg=pt.bg[i])
+        plotCI(x, y, uiw=y.err, liw=y.err, col=col[i], pch=pch[j], cex=site.cex, add=T, gap=0, pt.bg=pt.bg[i])
+        plotCI(x, y, uiw=x.err, liw=x.err, err="x", col=col[i], pch=pch[j], cex=site.cex, add=T, gap=0, pt.bg=pt.bg[i])
                                         #      print(paste(x, x.err,y, y.err))
                                         #      mat[length(harlev)*(i-1)+j, T]<-c(typlev[i], harlev[j], x,x.err,y,y.err)
       
@@ -218,14 +231,14 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
 
   scores<-(scores(ord, display="species", choices=1:2))
   if (spe.label.type=="point")
-  points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=.4)
+  points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=spe.cex)
   if (spe.label.type=="text")
-  text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=.4)
+  text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=spe.cex)
   #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
   
   title(name)
-  legend("bottomright", pch=pch, col="black", paste(sep2.lev, sep2.unit))
-  legend("bottomleft", pch=16, col=col, bg=pt.bg, paste(sep1.lev, sep1.unit))
+  legend("bottomright", pch=pch, col=col[1], bg=pt.bg[1], paste(sep2.lev, sep2.unit), bty="n")
+  legend("bottomleft", pch=pch[1], col=col, bg=pt.bg, paste(sep1.lev, sep1.unit), bty="n")
 
 }
 
