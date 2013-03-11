@@ -86,7 +86,7 @@ for (i in 1:(length(tmp4)-1)) {
 }
 
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, col.inv=F, pch=c(21,22), legsize=1, cex.sig=1, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, pt.bg=1, col.inv=F, pch=c(21,22), legsize=1, cex.sig=1, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -102,7 +102,7 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, col.inv=F, pch=
   if(col.inv==F) {
     plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means+error)), tck=0.01, ...)
     for(i in 1:nrow(means)) {
-      plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=col[i], add=T, gap=0, ...)
+      plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, ...)
     }
     
     if (legpl != "none")
