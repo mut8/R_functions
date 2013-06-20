@@ -86,7 +86,7 @@ for (i in 1:(length(tmp4)-1)) {
 }
 
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, pt.bg=1, col.inv=F, pch=c(21,22), legsize=1, cex.sig=1, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, pt.bg=1, col.inv=F, pch=c(21,22), legsize=1, cex.sig=1, cex.pt=1, er.type="sd", ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -96,17 +96,25 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", col=1, pt.bg=1, col.in
   var1<-var[cond1]
   
   means<-tapply(var1, list(fac1,hor1), mean)
-  error<-tapply(var1, list(fac1,hor1), stderr)
+  if(er.type=="se") {
+    error<-tapply(var1, list(fac1,hor1), stderr)    
+  }
+  if(er.type=="sd") {
+    error<-tapply(var1, list(fac1,hor1), sd)
+  }
+  if(er.type=="ci") {
+    error<-tapply(var1, list(fac1,hor1), CI)
+  }
   col<-rep(col, ncol(means))
-  
+
   if(col.inv==F) {
     plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means+error)), tck=0.01, ...)
     for(i in 1:nrow(means)) {
-      plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, ...)
+      plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
     }
     
     if (legpl != "none")
-      legend(legpl, pch=pch[1:ncol(means)], pt.bg=col[1:ncol(means)], rownames(means), cex=legsize)
+      legend(legpl, pch=pch[1:ncol(means)],col=col[1:ncol(means)], pt.bg=col[1:ncol(means)], rownames(means), cex=legsize)
     
     axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
     axis(1, tck=0.01)

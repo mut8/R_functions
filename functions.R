@@ -166,7 +166,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, ...)
 {
   sep1.lev<-unique(as.factor(site.sep1))
   sep2.lev<-unique(as.factor(site.sep2))
@@ -174,9 +174,9 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   if(length(col) < length(sep1.lev))
     col <- rep(col, length(sep1.lev))
   if(length(pch) < length(sep2.lev))
-    pch <- rep(pch, length(sep1.lev))
-#  if(length(pt.bg) < length(sep2.lev))
-#    pt.bg <- rep(pt.bg, length(sep1.lev))
+    pch <- rep(pch, length(sep2.lev))
+  if(length(pt.bg) < length(sep2.lev))
+    pt.bg <- rep(pt.bg, length(sep2.lev))
   
   
   xvar<-eigenvals(ord)/sum(eigenvals(ord))
@@ -196,6 +196,11 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
        xlab=xlab, ylab=ylab)
 
   
+  scores<-(scores(ord, display="species", choices=1:2))
+  if (spe.label.type=="point")
+    points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=spe.cex)
+  if (spe.label.type=="text")
+    text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=spe.cex)
   
   scores.sites<-(scores(ord, display="sites", choices=choices))
                                         #        for (i in 1:length(typlev))
@@ -203,7 +208,10 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
                                         #        points(ord, choices=c(1,2),  display="sites", select=harvest==harlev[j] & type==typlev[i], col=colscale[j], pch=pch[i], cex=.6)
                                         #     mat<-matrix(nrow=length(typlev)*length(harlev), ncol=6)
                                         #      colnames(mat)<-c("type", "harvest", "pca1", "pca1.error", "pca2", "pca2.error")
+  
 
+  
+  
   for (i in 1:length(sep1.lev))
     for (j in 1:length(sep2.lev))
       {
@@ -228,17 +236,11 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
                                         #      mat
                                         #      write.csv(mat, "export/dif.sites.csv")
                                         #      print(spe.labels)
-
-  scores<-(scores(ord, display="species", choices=1:2))
-  if (spe.label.type=="point")
-  points(scores[,1]*spe.mult, scores[,2]*spe.mult, pch=spe.labels, cex=spe.cex)
-  if (spe.label.type=="text")
-  text(scores[,1]*spe.mult, scores[,2]*spe.mult, labels=spe.labels, cex=spe.cex)
   #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
   
   title(name)
-  legend("bottomright", pch=pch, col=col[1], bg=pt.bg[1], paste(sep2.lev, sep2.unit), bty="n")
-  legend("bottomleft", pch=pch[1], col=col, bg=pt.bg, paste(sep1.lev, sep1.unit), bty="n")
+  legend("bottomright", pch=pch, col=col[1], pt.bg=pt.bg[1], paste(sep2.lev, sep2.unit), bty="n", cex=cex.leg)
+  legend("bottomleft", pch=pch[1], col=col, pt.bg=pt.bg, paste(sep1.lev, sep1.unit), bty="n", cex=cex.leg)
 
 }
 
