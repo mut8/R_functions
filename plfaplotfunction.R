@@ -81,7 +81,7 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   cond2<-is.na(means)==F & is.na(error)==F
   
   plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", 
-       xlim=c(0,1.2*max(means[cond2]+error[cond2])), tck=0.01, type="n")
+       xlim=c(0,1.2*max(means[cond2]+error[cond2])), tck=0.01, type="n", ...)
 #    plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means[cond2]+error[cond2])), tck=0.01, ...)
   for(i in 1:nrow(means)) {
     tmp.mean<-as.numeric(as.vector(means[i,T]))
