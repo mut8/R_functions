@@ -34,8 +34,8 @@ transcomp<-function(x)
 }
 
                                         #funktion für standard error und CI
-stderr <- function(x) sqrt(var(x)/length(x))
-CI <- function(x, alpha=0.05) qt(1-(alpha/2),df=length(x)-1) * sqrt(var(x)/length(x))
+stderr <- function(x) sqrt(var(x[is.na(x)==F])/length(x[is.na(x)==F]))
+CI <- function(x, alpha=0.05) qt(1-(alpha/2),df=length(x[is.na(x)==F])-1) * sqrt(var(x[is.na(x)==F])/length(x[is.na(x)==F]))
 CI2<- function(sd, n, alpha=0.05) qt(1-(alpha/2),df=n-1) * sqrt(sd*sd/n)
 
 sumif<-function(df,sep) {
