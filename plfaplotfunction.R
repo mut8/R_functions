@@ -21,10 +21,10 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   
 
   
-  col<-rep(col, ncol(means))
-  pt.bg<-rep(pt.bg, ncol(means))
-  lty<-rep(lty, ncol(means))
-  lwd<-rep(lwd, ncol(means))
+  col<-rep(col, nrow(means))
+  pt.bg<-rep(pt.bg, nrow(means))
+  lty<-rep(lty, nrow(means))
+  lwd<-rep(lwd, nrow(means))
   
   cond2<-is.na(means)==F & is.na(error)==F
   
@@ -93,9 +93,8 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
 #   for(i in 1:nrow(means)) {
 #       plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
 #     }
-    
     if (legpl != "none")
-      legend(legpl, pch=pch[1:ncol(means)],col=col[1:ncol(means)], pt.bg=pt.bg[1:ncol(means)], rownames(means), cex=legsize, lty=lty, lwd=lwd)
+      legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1)
     
     axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
     axis(1, tck=0.01)
