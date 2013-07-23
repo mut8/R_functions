@@ -1,5 +1,5 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -125,4 +125,13 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
        }
       }
     } 
+  if (oneway==T) {
+    lm0<-aov(var1~hor1)
+    hsd<-HSD.test(lm0, "hor1", group=TRUE)
+    tmp<-hsd[[5]]
+    tmp$trt<-factor(tmp$trt, ordered=T, levels=horlev)
+    print(tmp)
+    text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
+    
+  }
 }
