@@ -133,4 +133,5 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
     text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
     
   }
+return(list(means,error))
 }
