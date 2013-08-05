@@ -1,5 +1,5 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -80,8 +80,10 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   
   cond2<-is.na(means)==F & is.na(error)==F
   
+  if (xlim[2]==F) {xlim=c(0,1.2*max(means[cond2]+error[cond2]))}
+  
   plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", 
-       xlim=c(0,1.2*max(means[cond2]+error[cond2])), tck=0.01, type="n", ...)
+       xlim=xlim, tck=0.01, type="n", ...)
 #    plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means[cond2]+error[cond2])), tck=0.01, ...)
   for(i in 1:nrow(means)) {
     tmp.mean<-as.numeric(as.vector(means[i,T]))
