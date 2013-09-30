@@ -140,10 +140,6 @@ if (addlines==F) {
     text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
     
   }
-<<<<<<< HEAD
   }
   return(list(means, error))
-=======
-return(list(means,error))
->>>>>>> 57923dc48dfb18e0c966630a339be9fa5c2b35ca
 }
