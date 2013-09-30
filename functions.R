@@ -180,13 +180,14 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   
   
   xvar<-eigenvals(ord)/sum(eigenvals(ord))
+  print(xvar)
   
   if(is.na(xvar[1])) {
     xlab<-paste(labname, "1 ", sep="")
     ylab<-paste(labname, "2 ", sep="")
   } else {
-    xlab<-paste(labname, choices[1], " ", formatC(xvar[1]*100, digits=3), "% variance", sep="")
-    ylab<-paste(labname, choices[2], " ", formatC(xvar[2]*100, digits=3), "% variance", sep="")
+    xlab<-paste(labname, choices[1], " ", formatC(xvar[choices[1]]*100, digits=3), "% variance", sep="")
+    ylab<-paste(labname, choices[2], " ", formatC(xvar[choices[2]]*100, digits=3), "% variance", sep="")
     
   }
   

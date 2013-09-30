@@ -1,12 +1,15 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
-  cond1<-is.element(hor,horlev)
+  cond1<-is.element(hor,horlev)& is.na(var)==F
   hor1<-factor(hor[cond1], ordered=T, levels=horlev)
   fac1<-factor(fac[cond1], levels=unique(fac[cond1]))
   var1<-var[cond1]
+  
+  
+  
   
   means<-tapply(var1, list(fac1,hor1), function(x) mean(x,na.rm=T))
     if(er.type=="se") {
@@ -21,10 +24,10 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   
 
   
-  col<-rep(col, ncol(means))
-  pt.bg<-rep(pt.bg, ncol(means))
-  lty<-rep(lty, ncol(means))
-  lwd<-rep(lwd, ncol(means))
+  col<-rep(col, nrow(means))
+  pt.bg<-rep(pt.bg, nrow(means))
+  lty<-rep(lty, nrow(means))
+  lwd<-rep(lwd, nrow(means))
   
   cond2<-is.na(means)==F & is.na(error)==F
   
@@ -53,7 +56,7 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
     rownames(means)<-levels(nest)
     colnames(means)<-colnames(means.old)
     
-    error <- means
+    error <- list(means, error)
     
     for (i in 1:nrow(means))
     {
@@ -81,9 +84,12 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   cond2<-is.na(means)==F & is.na(error)==F
   
   if (xlim[2]==F) {xlim=c(0,1.2*max(means[cond2]+error[cond2]))}
-  
+
+if (addlines==F) {
   plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", 
        xlim=xlim, tck=0.01, type="n", ...)
+} 
+  
 #    plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means[cond2]+error[cond2])), tck=0.01, ...)
   for(i in 1:nrow(means)) {
     tmp.mean<-as.numeric(as.vector(means[i,T]))
@@ -104,13 +110,13 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
     axis(3, tck=0.01, labels=F)
     axis(4, tck=0.01, labels=F,  at=ncol(means):1)
 
+  if(sig==T) {
+  
   if (nested[1]==F) {    
     for(i in 1:ncol(means)) {
       cond3<-hor1==colnames(means)[i]
           plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
-          plev<-
-            anova(lm(means.old[cond3]~fac1[cond3]))[1,"Pr(>F)"]
-      print(plev)
+          
       if(plev!="NaN"){
         text(max(means[,i]+error[,i])+max(means+error)*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
       }
@@ -128,7 +134,6 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
       }
     } 
   if (oneway==T) {
-    lm0<-aov(var1~hor1)
     hsd<-HSD.test(lm0, "hor1", group=TRUE)
     tmp<-hsd[[5]]
     tmp$trt<-factor(tmp$trt, ordered=T, levels=horlev)
@@ -136,4 +141,6 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
     text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
     
   }
+  }
+  return(list(means, error))
 }
