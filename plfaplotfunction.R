@@ -101,9 +101,8 @@ if (addlines==F) {
 #   for(i in 1:nrow(means)) {
 #       plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
 #     }
-    
     if (legpl != "none")
-      legend(legpl, pch=pch[1:ncol(means)],col=col[1:ncol(means)], pt.bg=pt.bg[1:ncol(means)], rownames(means), cex=legsize, lty=lty, lwd=lwd)
+      legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1)
     
     axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
     axis(1, tck=0.01)
@@ -141,6 +140,10 @@ if (addlines==F) {
     text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
     
   }
+<<<<<<< HEAD
   }
   return(list(means, error))
+=======
+return(list(means,error))
+>>>>>>> 57923dc48dfb18e0c966630a339be9fa5c2b35ca
 }
