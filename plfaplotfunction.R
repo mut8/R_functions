@@ -1,5 +1,5 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ax=T, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -86,7 +86,7 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   if (xlim[2]==F) {xlim=c(0,1.2*max(means[cond2]+error[cond2]))}
 
 if (addlines==F) {
-  plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", 
+  plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", xaxt="n", 
        xlim=xlim, tck=0.01, type="n", ...)
 } 
   
@@ -103,12 +103,12 @@ if (addlines==F) {
 #     }
     if (legpl != "none")
       legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1)
-    
+    if (ax==T) {
     axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
     axis(1, tck=0.01)
     axis(3, tck=0.01, labels=F)
     axis(4, tck=0.01, labels=F,  at=ncol(means):1)
-
+    }
   if(sig==T) {
   
   if (nested[1]==F) {    
