@@ -94,7 +94,7 @@ if (addlines==F) {
   for(i in 1:nrow(means)) {
     tmp.mean<-as.numeric(as.vector(means[i,T]))
     tmp.er<-as.numeric(as.vector(error[i,T]))
-    plotCI(tmp.mean, ncol(means):1, uiw=tmp.er, err="x", pch=pch[i], lty=lty[i], col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
+    plotCI(tmp.mean, ncol(means):1, uiw=tmp.er, err="x", pch=pch[i], lty=1, barcol=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
     lines(tmp.mean, ncol(means):1, col=pt.bg[i], lwd=lwd[i], lty=lty[i])
   }
   
@@ -133,11 +133,12 @@ if (addlines==F) {
       }
     } 
   if (oneway==T) {
+    lm0<-lm(var1~hor1)
     hsd<-HSD.test(lm0, "hor1", group=TRUE)
     tmp<-hsd[[5]]
     tmp$trt<-factor(tmp$trt, ordered=T, levels=horlev)
     print(tmp)
-    text(rep(0, nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
+    text(rep(xlim[1], nrow(tmp)), nrow(tmp):1, tmp[order(tmp$trt),"M"])
     
   }
   }
