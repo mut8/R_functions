@@ -166,7 +166,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, leg.sep1=T, leg.sep2=T, xaxt="s", yaxt="s", ...)
 {
   sep1.lev<-unique(as.factor(site.sep1))
   sep2.lev<-unique(as.factor(site.sep2))
@@ -194,7 +194,7 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   
   
   plot(ord, choices=choices, type="n", tck=.01,
-       xlab=xlab, ylab=ylab)
+       xlab=xlab, ylab=ylab, xaxt=xaxt, yaxt=yaxt)
 
   
   scores<-(scores(ord, display="species", choices=1:2))
@@ -240,8 +240,8 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   #      write.csv(data.frame(scores,peaks$orig), "export/dif.species.csv")
   
   title(name)
-  legend("bottomright", pch=pch, col=col[1], pt.bg=pt.bg[1], paste(sep2.lev, sep2.unit), bty="n", cex=cex.leg)
-  legend("bottomleft", pch=pch[1], col=col, pt.bg=pt.bg, paste(sep1.lev, sep1.unit), bty="n", cex=cex.leg)
+if(leg.sep1==T)  legend("bottomright", pch=pch, col=col[1], pt.bg=pt.bg[1], paste(sep2.lev, sep2.unit), bty="n", cex=cex.leg)
+if(leg.sep2==T)  legend("bottomleft", pch=pch[1], col=col, pt.bg=pt.bg, paste(sep1.lev, sep1.unit), bty="n", cex=cex.leg)
 
 }
 
@@ -550,3 +550,4 @@ cor<-cor.test(v1,v2)
 if (cor$p.value < alpha & line==T) abline(lm(v2~v1))     
 text(max(v1), ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=0.8, adj=c(1,1))
 }
+?plot
