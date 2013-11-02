@@ -8,7 +8,7 @@ library("lawstat")
 library("multcompView")
 library("RXKCD")
 library("xtable")
-
+library("lattice")
 ##################
 ##default colors##
 ##################
