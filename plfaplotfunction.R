@@ -22,8 +22,8 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
       error<-tapply(var1, list(fac1,hor1), CI)
     }
   
-
-  
+  error[is.na(error)] <- 0
+   
   col<-rep(col, nrow(means))
   pt.bg<-rep(pt.bg, nrow(means))
   lty<-rep(lty, nrow(means))
@@ -101,26 +101,38 @@ if (addlines==F) {
 #   for(i in 1:nrow(means)) {
 #       plotCI(means[i,T], ncol(means):1, err="x", uiw=error[i,T], type="o", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
 #     }
-    if (legpl != "none")
+
+#print legend unless legpl="none"
+if (legpl != "none")
       legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1)
+  
+#plot axis
     if (ax==T) {
     axis(2, at=ncol(means):1, labels=colnames(means), tck=0.01, las=1)
     axis(1, tck=0.01)
     axis(3, tck=0.01, labels=F)
     axis(4, tck=0.01, labels=F,  at=ncol(means):1)
     }
-  if(sig==T) {
   
+#plot asterices when significant differences within horizons
+  if(sig==T) {
+
+#when not nested
   if (nested[1]==F) {    
     for(i in 1:ncol(means)) {
       cond3<-hor1==colnames(means)[i]
-          plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
+          if (length(unique(fac1[cond3 & is.na(var1)==F]))>1) {
+            plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
+            print(plev)
+          }
           
       if(plev!="NaN"){
-        text(max(means[,i]+error[,i])+max(means+error)*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
+        text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
       }
       }
   }
+  
+#when nested samples
     else {
         for(i in 1:ncol(means)) {
           cond3<-colnames(means.old)==colnames(means)[i]
