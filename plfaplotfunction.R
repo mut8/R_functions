@@ -104,7 +104,7 @@ if (addlines==F) {
 
 #print legend unless legpl="none"
 if (legpl != "none")
-      legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1)
+      legend(legpl, pch=pch[1:nrow(means)],col=col[1:nrow(means)], pt.bg=pt.bg[1:nrow(means)], rownames(means), cex=legsize, lty=lty, lwd=1, bty="n")
   
 #plot axis
     if (ax==T) {
@@ -123,11 +123,10 @@ if (legpl != "none")
       cond3<-hor1==colnames(means)[i]
           if (length(unique(fac1[cond3 & is.na(var1)==F]))>1) {
             plev<-anova(lm(var1[cond3]~fac1[cond3]))[1,"Pr(>F)"]
-            print(plev)
           }
           
       if(plev!="NaN"){
-        text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.1, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
+        text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.03, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
       }
       }
   }
@@ -136,10 +135,11 @@ if (legpl != "none")
     else {
         for(i in 1:ncol(means)) {
           cond3<-colnames(means.old)==colnames(means)[i]
+          if (length(unique(nest[cond3 & is.na(means.old)==F]))>1) {
           plev<-anova(lm(means.old[,cond3]~nest))[1,"Pr(>F)"]
-          print(plev)
+          }
           if(plev!="NaN"){
-            text(max(means[,i]+error[,i])+max(means+error)*.1, ncol(means)+1-i, 
+            text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.03, ncol(means)+1-i, 
                  labels=siglev(plev), cex=cex.sig)
        }
       }
