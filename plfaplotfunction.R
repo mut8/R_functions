@@ -1,5 +1,5 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ax=T, offset=0, sfrac=0.01, col.bar=1, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ax=T, offset=0, sfrac=0.01, col.bar=1, lwd.bar=1, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -99,7 +99,7 @@ if (addlines==F) {
     y <- ncol(means):1 + offset*(i-nrow(means)/2-.5)
     tmp.mean<-as.numeric(as.vector(means[i,T]))
     tmp.er<-as.numeric(as.vector(error[i,T]))
-    plotCI(tmp.mean, y, uiw=tmp.er, err="x", pch=pch[i], lty=1, barcol=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, barcol=col.bar, sfrac=sfrac...)
+    plotCI(tmp.mean, y, uiw=tmp.er, err="x", pch=pch[i], lty=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, barcol=col.bar[i], sfrac=sfrac, lwd=lwd.bar, ...)
     lines(tmp.mean, y, col=pt.bg[i], lwd=lwd[i], lty=lty[i])
   }
   
