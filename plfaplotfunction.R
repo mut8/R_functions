@@ -1,5 +1,5 @@
 
-hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ax=T, ...) {
+hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg=1, col.inv=F, pch=c(21,22), lty=1, legsize=1, cex.sig=1, lwd=1, cex.pt=1, er.type="sd", er.type.nested="se", oneway=F, xlim=c(0,F), sig=T, addlines=F, ax=T, offset=0, sfrac=0.01, col.bar=1, ...) {
   #fac<-samples$Region
   #horlev<-c("L","F","H","B")
   #hor<-samples$horizon.ord
@@ -28,6 +28,8 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   pt.bg<-rep(pt.bg, nrow(means))
   lty<-rep(lty, nrow(means))
   lwd<-rep(lwd, nrow(means))
+  col.bar<-rep(col.bar, nrow(means))
+  
   
   cond2<-is.na(means)==F & is.na(error)==F
   
@@ -89,13 +91,16 @@ if (addlines==F) {
   plot(t(means[,T]), rep(ncol(means):1,nrow(means)), yaxt="n", xaxt="n", 
        xlim=xlim, tck=0.01, type="n", ...)
 } 
+
+
   
 #    plot(means[,T], rep(ncol(means):1,nrow(means)), yaxt="n", type="n", xlim=c(0, 1.2*max(means[cond2]+error[cond2])), tck=0.01, ...)
   for(i in 1:nrow(means)) {
+    y <- ncol(means):1 + offset*(i-nrow(means)/2-.5)
     tmp.mean<-as.numeric(as.vector(means[i,T]))
     tmp.er<-as.numeric(as.vector(error[i,T]))
-    plotCI(tmp.mean, ncol(means):1, uiw=tmp.er, err="x", pch=pch[i], lty=1, barcol=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, ...)
-    lines(tmp.mean, ncol(means):1, col=pt.bg[i], lwd=lwd[i], lty=lty[i])
+    plotCI(tmp.mean, y, uiw=tmp.er, err="x", pch=pch[i], lty=1, barcol=1, col=col[i], pt.bg=pt.bg[i], add=T, gap=0, cex=cex.pt, barcol=col.bar, sfrac=sfrac...)
+    lines(tmp.mean, y, col=pt.bg[i], lwd=lwd[i], lty=lty[i])
   }
   
 #   for(i in 1:nrow(means)) {
