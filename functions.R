@@ -544,7 +544,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
 corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, xlim=F, ylim=F, line=T, ...)
 {
-if (xlim[1]==F) {xlim <- c(min(v1, na.rm=T), max(v1, na.rm=T)}
+if (xlim[1]==F) {xlim <- c(min(v1, na.rm=T), max(v2, na.rm=T))}
 if (xlim[1]==F) {ylim<-c(min(v2, na.rm=T), max(v2, na.rm=T)+(max(v2, na.rm=T)-min(v2, na.rm=T))*0.1)}
 plot(v1, v2, ylim=ylim, ...)
 cor<-cor.test(v1,v2)
