@@ -331,9 +331,9 @@ corr.ab<-function(a,b, pomit=F, tex=F, alpha=0.05, digits=3)
           var1[i,j*2]<-siglev(tmp)
         } else { 
           if (ctest$p.value < alpha) { 
-            var1[i,j] <- paste("\\textbf{", formatC(ctest$estimate, digits=digits), "}" )
+            var1[i,j] <- paste("\\textbf{", formatC(ctest$estimate, digits=digits, format = "f"), "}" )
              } else { 
-               var1[i,j]<-formatC(ctest$estimate, digits=digits)
+               var1[i,j]<-formatC(ctest$estimate, digits=digits, format = "f")
                }
         }
       }
@@ -410,7 +410,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
   for (i in 1:nrow(mat))
     {
-      mat$y[i]<-mean(y[sepfac==mat$sepfac[i] & xfac==mat$xfac[i]])
+      mat$y[i]<-mean(y[sepfac==mat$sepfac[i] & xfac==mat$xfac[i]], na.rm=T)
       if(ci==F) {mat$y.errbar[i]<-stderr(y[sepfac==mat$sepfac[i] & xfac==mat$xfac[i]])} else
       {mat$y.errbar[i]<-CI(y[sepfac==mat$sepfac[i] & xfac==mat$xfac[i]],ci)}
       if(length(massloss)>1) {mat$massloss[i]<-mean(massloss[sepfac==mat$sepfac[i] & xfac==mat$xfac[i]])} else {mat$massloss[i]<-mat$xfac[i]}
@@ -542,12 +542,13 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 ##plots for correlations##
 ##########################
 
-corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, line=T, ...)
+corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, xlim=F, ylim=F, line=T, ...)
 {
-ylim<-c(min(v2), max(v2)+(max(v2)-min(v2))*0.1)
+if (xlim[1]==F) {xlim <- c(min(v1, na.rm=T), max(v1, na.rm=T)}
+if (xlim[1]==F) {ylim<-c(min(v2, na.rm=T), max(v2, na.rm=T)+(max(v2, na.rm=T)-min(v2, na.rm=T))*0.1)}
 plot(v1, v2, ylim=ylim, ...)
 cor<-cor.test(v1,v2)
 if (cor$p.value < alpha & line==T) abline(lm(v2~v1))     
-text(max(v1), ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=0.8, adj=c(1,1))
+text(max(v1, na.rm=T), ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=0.8, adj=c(1,1))
 }
-?plot
+

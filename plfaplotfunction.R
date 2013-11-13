@@ -8,7 +8,7 @@ hor.plot <- function(var, hor, horlev, fac, legpl="none", nested=F, col=1, pt.bg
   fac1<-factor(fac[cond1], levels=unique(fac[cond1]))
   var1<-var[cond1]
   
-  
+
   
   
   means<-tapply(var1, list(fac1,hor1), function(x) mean(x,na.rm=T))
@@ -131,7 +131,7 @@ if (legpl != "none")
           }
           
       if(plev!="NaN"){
-        text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.03, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig)
+        text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.00, ncol(means)+1-i, labels=siglev(plev), cex=cex.sig, pos=4)
       }
       }
   }
@@ -144,8 +144,8 @@ if (legpl != "none")
           plev<-anova(lm(means.old[,cond3]~nest))[1,"Pr(>F)"]
           }
           if(plev!="NaN"){
-            text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.03, ncol(means)+1-i, 
-                 labels=siglev(plev), cex=cex.sig)
+            text(max(means[,i]+error[,i])+ (par("xaxp")[2] - par("xaxp")[1])*.00, ncol(means)+1-i, 
+                 labels=siglev(plev), cex=cex.sig, pos=4)
        }
       }
     } 
@@ -161,3 +161,4 @@ if (legpl != "none")
   }
   return(list(means, error))
 }
+4
