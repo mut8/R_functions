@@ -166,7 +166,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, leg.sep1=T, leg.sep2=T, xaxt="s", yaxt="s", ...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, leg.sep1=T, leg.sep2=T, xaxt="s", yaxt="s", xlim=c(-1,1),...)
 {
   sep1.lev<-unique(as.factor(site.sep1))
   sep2.lev<-unique(as.factor(site.sep2))
@@ -194,7 +194,7 @@ ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="po
   
   
   plot(ord, choices=choices, type="n", tck=.01,
-       xlab=xlab, ylab=ylab, xaxt=xaxt, yaxt=yaxt)
+       xlab=xlab, ylab=ylab, xaxt=xaxt, yaxt=yaxt, ...)
 
   
   scores<-(scores(ord, display="species", choices=1:2))
@@ -356,7 +356,7 @@ corr.ab<-function(a,b, pomit=F, tex=F, alpha=0.05, digits=3)
 timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
                        massloss=0, masslossSE=0, ylim=c(F,F), xlim=c(F,F),
                        ci=F, allpoints=FALSE, legend=F, legsig=T, endsig=F, pt.bg=1, topsig=T,
-                       col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="black", type="o", letters=F, ...) {
+                       col=1, lwd=1, lty=1, pch=20, normalize=0, add=F, errcol="black", type="o",text.cex=1, letters=F, ...) {
                                         #xfac<-as.factor<-as.numeric(xfac)
 
                                         #  nam<-""
@@ -421,7 +421,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
     for (i in 1:length(seplev))
       {
         mat$y.errbar[mat$sepfac==seplev[i]]<-100*mat$y.errbar[mat$sepfac==seplev[i]]/mat$y[mat$sepfac==seplev[i]&mat$xfac==xlev[normalize]]
-        mat$y[mat$sepfac==seplev[i]]<-100*mat$y[mat$sepfac==seplev[i]]/mat$y[mat$sepfac==seplev[i]&mat$xfac==xlev[normalize]]
+        mat$y[mat$sepfac==seplev[i]]<-100*mat$y[mat$sepfac==seplev[i]]/mat$y[mat$sepfac==seplev[i]&mat$xfac==xlev[normalize]]-100
         mat$massloss[mat$sepfac==seplev[i]]<-mat$massloss[mat$sepfac==seplev[i]]-mat$massloss[mat$sepfac==seplev[i]&mat$xfac==xlev[normalize]]
       }
 
@@ -495,7 +495,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
   if (endsig == T) {
     select<-mat$xfac==max(xfac)
     text(rep(xlim[2], length(seplev)), mat$y[select],
-         labels=sig,cex=1)
+         labels=sig,cex=text.cex)
   }
 
   if (allpoints==TRUE)
@@ -522,7 +522,7 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 
           mat$sepcomp[mat$xf==xlev[j]]<-tmp$Letters
           sig[j] <- siglev(aov$p.value)
-          text(xlev[j], ylim[2], sig[j], cex=1, adj=c(0,1))
+          text(xlev[j], ylim[2], sig[j], cex=text.cex, adj=c(0,1))
         }
     }
 
@@ -530,8 +530,8 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
                                         #text(6, lim*0.3, twoway[5])
                                         #twoway[5]
 
-  if(letters[1]!=F & length(massloss)==1) {text(mat$massloss+(xmax-xmin)*letters[1], mat$y+(ymax-ymin)*letters[2], paste(mat$xcomp, mat$sepcomp))}
-  if(letters[1]!=F & length(massloss)>1) {text(mat$massloss+(xmax-xmin)*letters[1], mat$y+(ymax-ymin)*letters[2], mat$xcomp)}
+  if(letters[1]!=F & length(massloss)==1) {text(mat$massloss+(xmax-xmin)*letters[1], mat$y+(ymax-ymin)*letters[2], paste(mat$xcomp, mat$sepcomp), cex=text.cex)}
+  if(letters[1]!=F & length(massloss)>1) {text(mat$massloss+(xmax-xmin)*letters[1], mat$y+(ymax-ymin)*letters[2], mat$xcomp, cex=text.cex)}
 
 
   print(paste(xlev, "~ type", sig))
@@ -542,13 +542,16 @@ timeseries <- function(y, xfac, sepfac, nam="", xlab="", ylab="",
 ##plots for correlations##
 ##########################
 
-corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, xlim=F, ylim=F, line=T, ...)
+corplot<-function(v1,v2,v1lab="", v2lab="", alpha=0.05, xlim=F, ylim=F, line=T, textpos="right", textcex=0.8, ...)
 {
-if (xlim[1]==F) {xlim <- c(min(v1, na.rm=T), max(v2, na.rm=T))}
-if (xlim[1]==F) {ylim<-c(min(v2, na.rm=T), max(v2, na.rm=T)+(max(v2, na.rm=T)-min(v2, na.rm=T))*0.1)}
-plot(v1, v2, ylim=ylim, ...)
+if (xlim[1]==F) {xlim <- c(min(v1, na.rm=T), max(v1, na.rm=T))}
+if (ylim[1]==F) {ylim<-c(min(v2, na.rm=T), max(v2, na.rm=T)+(max(v2, na.rm=T)-min(v2, na.rm=T))*0.1)}
+plot(v1, v2, ylim=ylim, xlim=xlim, ...)
 cor<-cor.test(v1,v2)
 if (cor$p.value < alpha & line==T) abline(lm(v2~v1))     
-text(max(v1, na.rm=T), ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=0.8, adj=c(1,1))
+if (textpos =="left") {text(xlim[1], ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=textcex, pos=4,adj=c(0,1))}
+else if (textpos == "right") {text(xlim[2], ylim[2], labels=paste("R =", formatC(cor$estimate, digits=3), siglev(cor$p.value)), cex=textcex,pos=2,adj=c(1,1))
 }
 
+}
+?text
