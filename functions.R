@@ -6,7 +6,7 @@ library("TeachingDemos")
 library("agricolae")
 library("lawstat")
 library("multcompView")
-library("RXKCD")
+#library("RXKCD")
 library("xtable")
 library("lattice")
 ##################
@@ -64,7 +64,7 @@ siglev<-function(x, no.ns=F)
   if(x < 0.001)  {return("***")} else
   if(x < 0.01 ) {return("**")} else
   if (x < 0.05) {return ("*")} else
-  if (x < 0.1) {return (".")} else
+#  if (x < 0.1) {return (".")} else
   if(no.ns==F) {return("n.s.")} else {return("")}
 }
                                         #rotate point around origin
@@ -166,7 +166,7 @@ timeseries.panel<- function(x, ...) {
 #####################
 ##plots the means and x/y st errors by two factors of an ordination
 
-ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, leg.sep1=T, leg.sep2=T, xaxt="s", yaxt="s", xlim=c(-1,1),...)
+ord.plot<-function(ord, site.sep1, site.sep2, spe.labels="o", spe.label.type="point", col="black", pt.bg="black", pch=1, name="", spe.mult=1, sep1.unit="", sep2.unit="", arrow=F, labname="PCA", choices=1:2, spe.cex=0.4, site.cex=1, cex.leg=1, leg.sep1=T, leg.sep2=T, xaxt="s", yaxt="s", xlim=c(-1,1),ylim=c(-1,1),...)
 {
   sep1.lev<-unique(as.factor(site.sep1))
   sep2.lev<-unique(as.factor(site.sep2))

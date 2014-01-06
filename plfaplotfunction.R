@@ -161,4 +161,3 @@ if (legpl != "none")
   }
   return(list(means, error))
 }
-4
